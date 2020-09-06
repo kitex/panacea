@@ -1,78 +1,145 @@
 <template>
   <div>
-    <div>
-      <form>
-        <table class="table">
-          <tr>
-            <td>
-              <label>Network Data</label>
-            </td>
-            <td>
-              <input type="file" id="network_file" ref="network_file" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Customer Location</label>
-            </td>
-            <td>
-              <input type="file" id="cust_file" ref="cust_file" />
-            </td>
-          </tr>
+    <div class="row" style="height: 10px"></div>
+    <div class="row">
+      <div class="col ">
+        <q-file
+          borderless
+          id="network_file"
+          color="purple-12"
+          v-model="network_file"
+          label="Network Data"
+          ref="network_file"
+        >
+          <template v-slot:prepend>
+            <q-icon name="attach_file"></q-icon>
+          </template>
+        </q-file>
+      </div>
 
-          <tr>
-            <td>
-              <label>Buffer Distance</label>
-            </td>
-            <td>
-              <input type="checkb" v-model="checked" />
-              <input
-                v-if="checked"
-                class="form-control"
-                v-model="buffer_distance"
-                placeholder="Buffer Distance"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Unit</label>
-            </td>
-            <td>
-              <select class="form-control" v-model="unit">
-                <option value="kilometers">kilometers</option>
-                <option value="meters">meters</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </td>
-          </tr>
-        </table>
-      </form>
+      <div class="col ">
+        <q-file
+          borderless
+          id="cust_file"
+          color="purple-12"
+          v-model="customer_file"
+          label="Customer Locations"
+          ref="cust_file"
+        >
+          <template v-slot:prepend>
+            <q-icon name="attach_file"></q-icon>
+          </template>
+        </q-file>
+      </div>
+
+      <div class="col">
+        <q-checkbox label="Buffer Distance" v-model="checked" />
+      </div>
+
+      <div class="col">
+        <q-input v-if="checked" v-model="buffer_distance" />
+      </div>
+
+      <div class="col ">
+        <q-select
+          borderless
+          square
+          v-model="unit"
+          :options="options"
+          label="Unit"
+        ></q-select>
+      </div>
+
+      <div class="col "></div>
+
+      <div class="col ">
+        <q-btn color="white" text-color="black" label="Execute"></q-btn>
+      </div>
     </div>
-    <div id="mapid"></div>
+    <div class="row" style="height: 10px" />
+    <div class="row" style="height: 400px">
+      <div class="col-4 border-grey">Result Data</div>
+
+      <div class="col-8 border-grey">
+        <l-map
+          v-if="showMap"
+          :zoom="zoom"
+          :center="center"
+          :options="mapOptions"
+          style="height: 100%"
+          @update:zoom="zoomUpdate"
+        >
+          <l-tile-layer :url="url" :attribution="attribution" />
+          <l-marker :lat-lng="withPopup">
+            <l-popup>
+              <div @click="innerClick">
+                I am a popup
+                <p v-show="showParagraph">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Quisque sed pretium nisl, ut sagittis sapien. Sed vel
+                  sollicitudin nisi. Donec finibus semper metus id malesuada.
+                </p>
+              </div>
+            </l-popup>
+          </l-marker>
+          <l-marker :lat-lng="withTooltip">
+            <l-tooltip :options="{ permanent: true, interactive: true }">
+              <div @click="innerClick">
+                I am a tooltip
+                <p v-show="showParagraph">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Quisque sed pretium nisl, ut sagittis sapien. Sed vel
+                  sollicitudin nisi. Donec finibus semper metus id malesuada.
+                </p>
+              </div>
+            </l-tooltip>
+          </l-marker>
+        </l-map>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import L from 'leaflet';
+
 import axios from 'axios';
-import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+
+import { latLng, Icon } from 'leaflet';
+
+import 'leaflet/dist/leaflet.css';
+
+import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from 'vue2-leaflet';
+
+type D = Icon.Default & {
+  _getIconUrl: string;
+};
+
+Icon.Default.mergeOptions({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
+
+delete (Icon.Default.prototype as D)._getIconUrl;
 
 export default defineComponent({
-  name: 'MapComponent',
-  props: ['task', 'index', 'deleteTask'],
+  name: 'mapcomponent',
   components: {
     LMap,
     LTileLayer,
-    LMarker
+    LMarker,
+    LPopup,
+    LTooltip
   },
   data() {
     return {
+      network_file: '',
+      customer_file: '',
+      options: ['kilometers', 'meters'],
       tecp_message: 'Lets Find Nearest Point of Interest!',
       result_data: {},
       buffer_distance: 0,
@@ -82,10 +149,35 @@ export default defineComponent({
       circle_marker: {},
       line: {},
       unit: 'kilometers',
-      formData: new FormData()
+      formData: new FormData(),
+      loading: false,
+      errored: false,
+      zoom: 13,
+      center: latLng(47.41322, -1.219482),
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      withPopup: latLng(47.41322, -1.219482),
+      withTooltip: latLng(47.41422, -1.250482),
+      currentZoom: 11.5,
+      currentCenter: latLng(47.41322, -1.219482),
+      showParagraph: false,
+      mapOptions: {
+        zoomSnap: 0.5
+      },
+      showMap: true
     };
   },
   methods: {
+    zoomUpdate(zoom: number) {
+      this.currentZoom = zoom;
+    },
+    showLongText() {
+      this.showParagraph = !this.showParagraph;
+    },
+    innerClick() {
+      alert('Click!');
+    },
     uploadfiles() {
       var network_filelist = (this.$refs.network_file as HTMLInputElement)
         .files;
@@ -155,11 +247,4 @@ export default defineComponent({
     }
   }
 });
-
-var map = L.map('mapid').setView([27.65389, 85.236627], 13);
-
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-  attribution:
-    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
 </script>

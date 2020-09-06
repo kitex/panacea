@@ -14,17 +14,10 @@
         <q-toolbar-title>
           Panacea
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
-    >
+    <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-grey-1">
       <q-list>
         <q-item-label header class="text-grey-8"> </q-item-label>
         <EssentialLink
@@ -65,8 +58,8 @@ const linksData = [
     link: 'https://chat.quasar.dev'
   },
   {
-    title: 'Operation Support',
-    caption: 'forum.quasar.dev',
+    title: 'OSS',
+    caption: 'Operation Support System',
     icon: 'public',
     link: '/#/oss'
   }
