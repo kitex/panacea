@@ -1,46 +1,16 @@
 <template>
   <q-page class="padding">
-    <task
-      v-for="(task, index) in tasks"
-      :task="task"
-      :index="index"
-      :deleteTask="deleteTask"
-      :key="task.id"
-    ></task>
-    <button style="position:absolute;right:10px" @click="counter++">
-      {{ counter }}
-    </button>
-    <input
-      v-model="message"
-      @keyup.enter="alertMessage"
-      @keyup.esc="handleKeyUp"
-      v-autofocus
-      v-bind:class="{ error: message.length > 22 }"
-      :style="errorstyle"
-      ref="messageInput"
-    />
-    <div>{{ message.length }}</div>
-
-    <button @click="clearMessage">Clear</button>
-
-    <h5 class="border-grey" v-if="message.length">{{ message }}</h5>
-    <h6 v-else>no message entered</h6>
-
-    <hr />
-    <p>Upper case message : {{ messageUpperCase }}</p>
-    <p>Lower case message : {{ message | messageLowercase }}</p>
+    <mapcomponent></mapcomponent>
   </q-page>
 </template>
 
 <script lang="ts">
-import { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/CompositionComponent.vue';
-import Task from 'components/TaskComponent.vue';
-import { defineComponent, ref } from '@vue/composition-api';
+import MapComponent from 'components/MapComponent.vue';
+import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'PageIndex',
-  components: { ExampleComponent, Task },
+  components: { MapComponent },
   data() {
     return {
       message: 'The message',
@@ -132,34 +102,6 @@ export default defineComponent({
   },
   destroyed() {
     console.log(' destroyed');
-  },
-  setup() {
-    const todos = ref<Todo[]>([
-      {
-        id: 1,
-        content: 'ct1'
-      },
-      {
-        id: 2,
-        content: 'ct2'
-      },
-      {
-        id: 3,
-        content: 'ct3'
-      },
-      {
-        id: 4,
-        content: 'ct4'
-      },
-      {
-        id: 5,
-        content: 'ct5'
-      }
-    ]);
-    const meta = ref<Meta>({
-      totalCount: 1200
-    });
-    return { todos, meta };
   }
 });
 </script>
