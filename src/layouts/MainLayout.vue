@@ -62,6 +62,12 @@ const linksData = [
     caption: 'Operation Support System',
     icon: 'public',
     link: '/#/oss'
+  },
+  {
+    title: 'Security',
+    caption: 'security',
+    icon: 'security',
+    link: '/#/oss'
   }
 ];
 

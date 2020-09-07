@@ -5,7 +5,10 @@ const routes: RouteConfig[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/Index.vue') },
+      { path: '/oss', component: () => import('pages/Index.vue') },
+      { path: '/security', component: () => import('pages/Index.vue') },
+      { path: '/noc', component: () => import('pages/NOC.vue') }
     ]
   },
 

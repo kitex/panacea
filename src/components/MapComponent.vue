@@ -137,8 +137,8 @@ export default defineComponent({
   },
   data() {
     return {
-      network_file: '',
-      customer_file: '',
+      network_file: File,
+      customer_file: File,
       options: ['kilometers', 'meters'],
       tecp_message: 'Lets Find Nearest Point of Interest!',
       result_data: {},
