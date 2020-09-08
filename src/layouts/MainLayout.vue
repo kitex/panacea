@@ -43,19 +43,19 @@ const linksData = [
     title: 'NOC',
     caption: 'network operations',
     icon: 'rss_feed',
-    link: '/noc'
+    link: '/#/noc'
   },
   {
     title: 'Customer Support',
     caption: 'customer support',
     icon: 'favorite',
-    link: '/cs'
+    link: '/#/Customersupport'
   },
   {
     title: 'Network Planning',
     caption: 'Network planning and Strategy',
     icon: 'record_voice_over',
-    link: 'https://chat.quasar.dev'
+    link: '/#/Networkplanning'
   },
   {
     title: 'OSS',
@@ -67,7 +67,7 @@ const linksData = [
     title: 'Security',
     caption: 'security',
     icon: 'security',
-    link: '/#/oss'
+    link: '/#/security'
   }
 ];
 

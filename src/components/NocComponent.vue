@@ -1,51 +1,7 @@
 <template>
   <div>
-    <div class="row" style="height: 10px"></div>
-    <div class="row">
-      <div class="col ">
-        <q-file borderless v-model="network_files" label="Network Location">
-          <template v-slot:prepend>
-            <q-icon name="attach_file" />
-          </template>
-        </q-file>
-      </div>
-      <div class="col ">
-        <q-file borderless v-model="customer_files" label="Customer Location">
-          <template v-slot:prepend>
-            <q-icon name="attach_file" />
-          </template>
-        </q-file>
-      </div>
-
-      <div class="col">
-        <q-checkbox label="Buffer Distance" v-model="checked" />
-      </div>
-
-      <div class="col">
-        <q-input v-if="checked" v-model="buffer_distance" />
-      </div>
-
-      <div class="col ">
-        <q-select
-          borderless
-          square
-          v-model="unit"
-          :options="options"
-          label="Unit"
-        ></q-select>
-      </div>
-
-      <div class="col "></div>
-
-      <div class="col ">
-        <q-btn color="white" text-color="black" label="Execute"></q-btn>
-      </div>
-    </div>
-    <div class="row" style="height: 10px" />
-    <div class="row" style="height: 600px">
-      <div class="col-4 border-grey">Result Data</div>
-
-      <div class="col-8 border-grey">
+    <div class="row" style="height:100vh">
+      <div class="col border-grey">
         <l-map
           v-if="showMap"
           :zoom="zoom"

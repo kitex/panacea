@@ -1,19 +1,15 @@
 <template>
-  <q-page class="padding">
-    <mapcomponent> </mapcomponent>
-  </q-page>
+  <q-page class="padding"> </q-page>
 </template>
 
 <script lang="ts">
-import mapcomponent from 'components/MapComponent.vue';
-
 import { defineComponent } from '@vue/composition-api';
 
 import 'leaflet/dist/leaflet.css';
 
 export default defineComponent({
   name: 'PageIndex',
-  components: { mapcomponent }
+  components: {}
 });
 </script>
 

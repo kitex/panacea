@@ -1,11 +1,11 @@
 <template>
   <q-page class="padding">
-    <noccomponent> </noccomponent>
+    <mapcomponent> </mapcomponent>
   </q-page>
 </template>
 
 <script lang="ts">
-import noccomponent from 'components/NocComponent.vue';
+import mapcomponent from 'components/MapComponent.vue';
 
 import { defineComponent } from '@vue/composition-api';
 
@@ -13,7 +13,7 @@ import 'leaflet/dist/leaflet.css';
 
 export default defineComponent({
   name: 'PageIndex',
-  components: { noccomponent }
+  components: { mapcomponent }
 });
 </script>
 

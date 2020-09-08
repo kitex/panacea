@@ -8,7 +8,15 @@ const routes: RouteConfig[] = [
       { path: '', component: () => import('pages/Index.vue') },
       { path: '/oss', component: () => import('pages/Index.vue') },
       { path: '/security', component: () => import('pages/Index.vue') },
-      { path: '/noc', component: () => import('pages/NOC.vue') }
+      { path: '/noc', component: () => import('pages/NOC.vue') },
+      {
+        path: '/Customersupport',
+        component: () => import('pages/Customersupport.vue')
+      },
+      {
+        path: '/Networkplanning',
+        component: () => import('pages/Networkplanning.vue')
+      }
     ]
   },
 
