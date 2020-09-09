@@ -1,28 +1,38 @@
 <template>
-<div>
   <q-page class="padding">
     <div class="q-pa-md">
-    <q-table
-      class="my-sticky-virtscroll-table"
-      virtual-scroll
-      :pagination.sync="pagination"
-      :rows-per-page-options="[0]"
-      :virtual-scroll-sticky-size-start="48"
-      row-key="index"
-      title="Treats"
-      :data="data"
-      :columns="columns"
-    />    
-     </q-page>
-     </div>
+      <q-table
+        class="my-sticky-virtscroll-table"
+        virtual-scroll
+        :pagination.sync="pagination"
+        :rows-per-page-options="[0]"
+        :virtual-scroll-sticky-size-start="48"
+        row-key="index"
+        title="Minimum Baseline Security Scan Report"
+        :data="data"
+        @row-click="onRowClick"
+        :columns="columns"
+      />
+    </div>
+    <div class="row" style="height: 600px">
+      <div class="col"><v-chart :options="polar" /></div>
+      <div class="col"><v-chart :options="bar" /></div>
+    </div>
+  </q-page>
 </template>
 
 <script lang="ts">
+// https://www.freecodecamp.org/news/how-to-add-charts-and-graphs-to-a-vue-js-application-29f943a45d09/
 import { defineComponent } from '@vue/composition-api';
+import ECharts from 'vue-echarts';
+import 'echarts/lib/chart/line';
+import 'echarts/lib/component/polar';
+import 'echarts/lib/chart/bar';
+import 'echarts/lib/component/title';
 
 const seed = [
   {
-    name: 'Frozen Yogurt',
+    name: 'MBSS 1',
     calories: 159,
     fat: 6.0,
     carbs: 24,
@@ -32,7 +42,7 @@ const seed = [
     iron: '1%'
   },
   {
-    name: 'Ice cream sandwich',
+    name: 'MBSS 2',
     calories: 237,
     fat: 9.0,
     carbs: 37,
@@ -42,7 +52,7 @@ const seed = [
     iron: '1%'
   },
   {
-    name: 'Eclair',
+    name: 'MBSS 3',
     calories: 262,
     fat: 16.0,
     carbs: 23,
@@ -52,7 +62,7 @@ const seed = [
     iron: '7%'
   },
   {
-    name: 'Cupcake',
+    name: 'MBSS 4',
     calories: 305,
     fat: 3.7,
     carbs: 67,
@@ -62,7 +72,7 @@ const seed = [
     iron: '8%'
   },
   {
-    name: 'Gingerbread',
+    name: 'MBSS 5',
     calories: 356,
     fat: 16.0,
     carbs: 49,
@@ -72,7 +82,7 @@ const seed = [
     iron: '16%'
   },
   {
-    name: 'Jelly bean',
+    name: 'MBSS 6',
     calories: 375,
     fat: 0.0,
     carbs: 94,
@@ -82,7 +92,7 @@ const seed = [
     iron: '0%'
   },
   {
-    name: 'Lollipop',
+    name: 'MBSS 7',
     calories: 392,
     fat: 0.2,
     carbs: 98,
@@ -92,7 +102,7 @@ const seed = [
     iron: '2%'
   },
   {
-    name: 'Honeycomb',
+    name: 'MBSS 8',
     calories: 408,
     fat: 3.2,
     carbs: 87,
@@ -102,7 +112,7 @@ const seed = [
     iron: '45%'
   },
   {
-    name: 'Donut',
+    name: 'MBSS 9',
     calories: 452,
     fat: 25.0,
     carbs: 51,
@@ -112,7 +122,7 @@ const seed = [
     iron: '22%'
   },
   {
-    name: 'KitKat',
+    name: 'MBSS 10',
     calories: 518,
     fat: 26.0,
     carbs: 65,
@@ -121,28 +131,87 @@ const seed = [
     calcium: '12%',
     iron: '6%'
   }
-]
+];
 console.log('I am running');
 // we generate lots of rows here
 let data: any[] = [];
 for (let i = 0; i < 1000; i++) {
-  data = data.concat(seed.slice(0).map(r => ({ ...r })))
+  data = data.concat(seed.slice(0).map(r => ({ ...r })));
 }
 data.forEach((row, index) => {
-  row.index = index
-})
+  row.index = index;
+});
 
 // we are not going to change this array,
 // so why not freeze it to avoid Vue adding overhead
 // with state change detection
-Object.freeze(data)
+Object.freeze(data);
+
+let pdata = [];
+
+for (let i = 0; i <= 360; i++) {
+  let t = (i / 180) * Math.PI;
+  let r = Math.sin(2 * t) * Math.cos(2 * t);
+  pdata.push([r, i]);
+}
 
 export default defineComponent({
-  name: 'SecurityIndex',
-  components: {},
-   data () {
+  name: 'Security',
+  components: { 'v-chart': ECharts },
+  data() {
     return {
-   data,
+      polar: {
+        title: {
+          text: 'Major Security Risks'
+        },
+        legend: {
+          data: ['line']
+        },
+        polar: {
+          center: ['50%', '54%']
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        angleAxis: {
+          type: 'value',
+          startAngle: 0
+        },
+        radiusAxis: {
+          min: 0
+        },
+        series: [
+          {
+            coordinateSystem: 'polar',
+            name: 'line',
+            type: 'line',
+            showSymbol: false,
+            data: pdata
+          }
+        ],
+        animationDuration: 2000
+      },
+      bar: {
+        xAxis: {
+          data: ['Critical', 'Major', 'High', 'Low', 'Info']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            type: 'bar',
+            data: [5, 20, 33, 24, 80]
+          }
+        ],
+        title: {
+          text: 'Controls By Category'
+        }
+      },
+      data,
 
       pagination: {
         rowsPerPage: 0
@@ -157,22 +226,33 @@ export default defineComponent({
         {
           name: 'name',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'MBSS Controls',
           align: 'left',
-          field: (row: { name: any; }) => row.name,
+          field: (row: { name: any }) => row.name,
           format: (val: any) => `${val}`,
           sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        {
+          name: 'calories',
+          align: 'center',
+          label: 'Category',
+          field: 'calories',
+          sortable: true
+        },
+        { name: 'fat', label: 'Fail/Pass', field: 'fat', sortable: true }
       ]
+    };
+  },
+  methods: {
+    onRowClick(evt, row) {
+      console.log('clicked on', row);
+      let routeData = this.$router.resolve({
+        name: 'securityDetails',
+        query: { data: 'someData' }
+      });
+      window.open(routeData.href, '_blank');
     }
-   }
+  }
 });
 </script>
 
