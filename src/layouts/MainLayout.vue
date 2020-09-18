@@ -14,6 +14,30 @@
         <q-toolbar-title>
           Panacea
         </q-toolbar-title>
+
+        <q-btn-dropdown stretch flat label="Options">
+          <q-list>
+            <q-slide-item @click="logoff()">
+              <template v-slot:left>
+                <q-icon name="done" />
+              </template>
+              <template v-slot:right>
+                <q-icon name="alarm" />
+              </template>
+
+              <q-item>
+                <q-item-section avatar>
+                  <q-avatar
+                    color="primary"
+                    text-color="white"
+                    icon="directions"
+                  />
+                </q-item-section>
+                <q-item-section>Sign Out</q-item-section>
+              </q-item>
+            </q-slide-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
@@ -67,7 +91,7 @@ const linksData = [
     title: 'Security',
     caption: 'security',
     icon: 'security',
-    link: '/#/security'
+    link: '/#/securityIndex'
   }
 ];
 
@@ -80,6 +104,11 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const essentialLinks = ref(linksData);
     return { leftDrawerOpen, essentialLinks };
+  },
+  methods: {
+    logoff() {
+      this.$router.push({ name: 'loginpage' });
+    }
   }
 });
 </script>
