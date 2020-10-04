@@ -1,7 +1,7 @@
 <template>
   <q-page class="padding">
     <div class="q-pa-md">
-      <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+      <q-form @submit="onSubmit" class="q-gutter-md">
         <q-field color="purple-12" label="Scan Report Name" stack-label />
         <q-input v-model="scan_report_name" filled readonly="readonly" />
 
@@ -87,8 +87,8 @@
 <script lang="ts">
 // https://www.freecodecamp.org/news/how-to-add-charts-and-graphs-to-a-vue-js-application-29f943a45d09/
 import { defineComponent } from '@vue/composition-api';
-
 import axios from 'axios';
+import { SecurityEvidence } from './components/models';
 
 console.log('I am running');
 // we generate lots of rows here
@@ -96,7 +96,12 @@ console.log('I am running');
 export default defineComponent({
   name: 'SecurityDetails',
   components: {},
-  props: ['securityEvidence'],
+  props: {
+    securityEvidence: {
+      type: Object as () => SecurityEvidence,
+      default: () => ['securityEvidence']
+    }
+  },
   data() {
     return {
       separator: 'cell',
@@ -133,6 +138,8 @@ export default defineComponent({
           style: 'width: 5%'
         }
       ],
+      formData: new FormData(),
+
       compliance_check_actual_value: '',
       compliance_check_info: '',
       compliance_check_name: '',
@@ -159,7 +166,31 @@ export default defineComponent({
     this.scanresult_id = this.securityEvidence.scanresult_id;
     this.sn = this.securityEvidence.sn;
   },
-  methods: {}
+  methods: {
+    onSubmit() {
+      axios.defaults.withCredentials = true;
+      this.formData.append('host_resolved_ip', String(12));
+      this.formData.append('evidence_remarks', this.remarks);
+      console.log(this.evidence_file);
+      this.formData.append('evidence_file', this.evidence_file);
+      this.formData.append('evidence_image', this.evidence_image);
+      axios
+        .post('http://localhost:5000/post_compliance_evidence', this.formData, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+          this.errored = true;
+        })
+        .finally(() => (this.loading = false));
+    }
+  }
 });
 </script>
 
