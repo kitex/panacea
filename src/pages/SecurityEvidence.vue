@@ -60,16 +60,22 @@
         <q-field color="purple-12" label="Remarks" stack-label />
         <q-input v-model="remarks" filled type="textarea" />
 
-        <q-file borderless v-model="evidence_file" label="Upload Evidence File">
+        <q-file
+          multiple
+          borderless
+          v-model="evidence_file"
+          label="Upload Evidence File"
+        >
           <template v-slot:prepend>
             <q-icon name="attach_file" />
           </template>
         </q-file>
 
         <q-file
+          multiple
           borderless
           v-model="evidence_image"
-          label="Upload Evidence File"
+          label="Upload Evidence Image"
         >
           <template v-slot:prepend>
             <q-icon name="attach_file" />
@@ -165,13 +171,33 @@ export default defineComponent({
     this.scan_report_name = this.securityEvidence.scan_report_name;
     this.scanresult_id = this.securityEvidence.scanresult_id;
     this.sn = this.securityEvidence.sn;
+    axios.defaults.withCredentials = true;
+    axios
+      .get('http://localhost:5000/list_compliance_evidence', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'multipart/form-data',
+          compliance_check_name: this.compliance_check_name,
+          host_resolved_ip: this.host_resolved_ip
+        },
+        params: {}
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+        this.errored = true;
+      })
+      .finally(() => (this.loading = false));
   },
   methods: {
     onSubmit() {
       axios.defaults.withCredentials = true;
-      this.formData.append('host_resolved_ip', String(12));
+      this.formData.append('host_resolved_ip', this.host_resolved_ip);
+      this.formData.append('scan_report_name', this.scan_report_name);
       this.formData.append('evidence_remarks', this.remarks);
-      console.log(this.evidence_file);
+      this.formData.append('compliance_check_name', this.compliance_check_name);
       this.formData.append('evidence_file', this.evidence_file);
       this.formData.append('evidence_image', this.evidence_image);
       axios
