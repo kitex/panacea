@@ -35,10 +35,10 @@ const routes: RouteConfig[] = [
         props: true,
         component: () => import('pages/SecurityDetails.vue')
       },
-      {
-        path: '/securityChart',
-        component: () => import('pages/Security.vue')
-      },
+      //{
+        //path: '/securityChart',
+        //component: () => import('pages/Security.vue')
+      //},
       { path: '/noc', component: () => import('pages/NOC.vue') },
       {
         path: '/Customersupport',

@@ -52,9 +52,9 @@ import { defineComponent } from '@vue/composition-api';
 
 import axios from 'axios';
 
-import 'leaflet/dist/leaflet.css';
+import { msg_response } from '../components/models';
 
-console.log('I am loaded');
+import 'leaflet/dist/leaflet.css';
 
 export default defineComponent({
   name: 'PageIndex',
@@ -71,8 +71,6 @@ export default defineComponent({
   },
   methods: {
     check_user_isvalid() {
-      console.log(this.username);
-      console.log(this.password);
       this.formData.append('username', this.username);
       this.formData.append('password', this.password);
       console.log(this.formData);
@@ -85,16 +83,16 @@ export default defineComponent({
           }
         })
         .then(response => {
-          // this.result_data = response.data;
+          let resp_data = response.data as msg_response;
 
-          console.log(response.data);
-          if (response.data.message == true) {
-            this.$router.push({ name: 'portal' });
+          console.log(resp_data);
+          console.log(typeof resp_data);
+
+          if (resp_data.message == true) {
+            void this.$router.push({ name: 'portal' });
           } else {
             this.msg = 'Invalid Credentials!';
           }
-          // console.log(typeof this.result_data.columns);
-          // console.log(this.result_data);
         })
         .catch(error => {
           console.log(error);

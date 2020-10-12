@@ -3,7 +3,7 @@
     <div class="q-pa-md">
       <q-table
         title="Scan Details"
-        :data="data"
+        :data="resp_data"
         :columns="columns"
         row-key="scan_ip"
         :separator="separator"
@@ -19,8 +19,7 @@ import { defineComponent } from '@vue/composition-api';
 
 import axios from 'axios';
 
-console.log('I am running');
-// we generate lots of rows here
+import { SecurityEvidence } from '../components/models';
 
 export default defineComponent({
   name: 'SecurityDetails',
@@ -30,7 +29,7 @@ export default defineComponent({
   data() {
     return {
       separator: 'cell',
-      data: [],
+      resp_data: Array<SecurityEvidence>(),
       title: '',
       columns: [
         {
@@ -72,13 +71,14 @@ export default defineComponent({
   },
   methods: {
     list_compliance_report() {
-      console.log(this.items.scanresult_id);
-      this.title = this.items.scan_report_name;
+      //console.log(this.items);
+      let items: SecurityEvidence = this.items as SecurityEvidence;
+      //console.log(items.scanresult_id);
+      this.title = items.scan_report_name;
       axios.defaults.withCredentials = true;
       axios
         .get(
-          'http://localhost:5000/list_compliance_detail/' +
-            this.items.scanresult_id,
+          'http://localhost:5000/list_compliance_detail/' + items.scanresult_id,
           {
             headers: {
               'Access-Control-Allow-Origin': '*',
@@ -87,7 +87,7 @@ export default defineComponent({
           }
         )
         .then(response => {
-          this.data = response.data;
+          this.resp_data = response.data as Array<SecurityEvidence>;
         })
         .catch(error => {
           console.log(error);
@@ -95,9 +95,9 @@ export default defineComponent({
         })
         .finally(() => (this.loading = false));
     },
-    onRowClick(evt, row) {
+    onRowClick(evt: Array<SecurityEvidence>, row: string) {
       console.log('clicked on', row);
-      this.$router.push({
+      void this.$router.push({
         name: 'securityEvidence',
         params: {
           securityEvidence: row

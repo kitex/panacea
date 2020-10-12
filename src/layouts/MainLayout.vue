@@ -107,7 +107,7 @@ export default defineComponent({
   },
   methods: {
     logoff() {
-      this.$router.push({ name: 'loginpage' });
+      void this.$router.push({ name: 'loginpage' });
     }
   }
 });

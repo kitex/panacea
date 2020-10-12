@@ -3,9 +3,9 @@
     <div class="q-pa-md">
       <q-table
         title="Security Scan"
-        :data="data"
+        :data="resp_data"
         :columns="columns"
-        row-key="scan_ip"
+        row-key="scanresult_id"
         @row-click="onRowClick"
       />
     </div>
@@ -18,12 +18,14 @@ import { defineComponent } from '@vue/composition-api';
 
 import axios from 'axios';
 
+import { SecurityScan } from '../components/models';
+
 export default defineComponent({
   name: 'SecurityIndex',
   components: {},
   data() {
     return {
-      data: [],
+      resp_data: new Array<SecurityScan>(),
       selected: [],
       columns: [
         {
@@ -95,17 +97,21 @@ export default defineComponent({
           }
         })
         .then(response => {
-          this.data = response.data;
+          //console.log(typeof response.data);
+          //console.log(response.data);
+          this.resp_data = response.data as Array<SecurityScan>;
         })
         .catch(error => {
-          // console.log(error);
+          console.log(error);
           this.errored = true;
         })
         .finally(() => (this.loading = false));
     },
-    onRowClick(evt, row) {
-      console.log('clicked on', row);
-      this.$router.push({
+    onRowClick(evt: Array<SecurityScan>, row: string) {
+      console.log(row);
+      //console.log(typeof row);
+      //console.log('clicked on', row);
+      void this.$router.push({
         name: 'securityDetails',
         params: {
           items: row

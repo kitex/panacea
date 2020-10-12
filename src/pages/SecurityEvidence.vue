@@ -94,10 +94,7 @@
 // https://www.freecodecamp.org/news/how-to-add-charts-and-graphs-to-a-vue-js-application-29f943a45d09/
 import { defineComponent } from '@vue/composition-api';
 import axios from 'axios';
-import { SecurityEvidence } from './components/models';
-
-console.log('I am running');
-// we generate lots of rows here
+import { SecurityEvidence } from '../components/models';
 
 export default defineComponent({
   name: 'SecurityDetails',
@@ -153,24 +150,26 @@ export default defineComponent({
       compliance_check_solution: '',
       host_resolved_ip: '',
       scan_report_name: '',
-      scanresult_id: 0,
+      scanresult_id: '',
       remarks: '',
-      sn: 0,
+      sn: '',
       errored: false,
       loading: false,
       pagination: []
     };
   },
   mounted() {
-    this.compliance_check_actual_value = this.securityEvidence.compliance_check_actual_value;
-    this.compliance_check_info = this.securityEvidence.compliance_check_info;
-    this.compliance_check_name = this.securityEvidence.compliance_check_name;
-    this.compliance_check_result = this.securityEvidence.compliance_check_result;
-    this.compliance_check_solution = this.securityEvidence.compliance_check_solution;
-    this.host_resolved_ip = this.securityEvidence.host_resolved_ip;
-    this.scan_report_name = this.securityEvidence.scan_report_name;
-    this.scanresult_id = this.securityEvidence.scanresult_id;
-    this.sn = this.securityEvidence.sn;
+    let se: SecurityEvidence = this.securityEvidence as SecurityEvidence;
+    this.compliance_check_actual_value = se.compliance_check_actual_value;
+    this.compliance_check_info = se.compliance_check_info;
+    this.compliance_check_name = se.compliance_check_name;
+    this.compliance_check_result = se.compliance_check_result;
+    this.compliance_check_solution = se.compliance_check_solution;
+    this.host_resolved_ip = se.host_resolved_ip;
+    this.scan_report_name = se.scan_report_name;
+    this.scanresult_id = se.scanresult_id;
+    this.sn = se.sn;
+
     axios.defaults.withCredentials = true;
     axios
       .get('http://localhost:5000/list_compliance_evidence', {
@@ -198,8 +197,8 @@ export default defineComponent({
       this.formData.append('scan_report_name', this.scan_report_name);
       this.formData.append('evidence_remarks', this.remarks);
       this.formData.append('compliance_check_name', this.compliance_check_name);
-      this.formData.append('evidence_file', this.evidence_file);
-      this.formData.append('evidence_image', this.evidence_image);
+      this.formData.append('evidence_file', this.evidence_file[0]);
+      this.formData.append('evidence_image', this.evidence_image[0]);
       axios
         .post('http://localhost:5000/post_compliance_evidence', this.formData, {
           headers: {
