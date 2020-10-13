@@ -67,31 +67,31 @@ const linksData = [
     title: 'NOC',
     caption: 'network operations',
     icon: 'rss_feed',
-    link: '/#/noc'
+    link: '/noc'
   },
   {
     title: 'Customer Support',
     caption: 'customer support',
     icon: 'favorite',
-    link: '/#/Customersupport'
+    link: '/Customersupport'
   },
   {
     title: 'Network Planning',
     caption: 'Network planning and Strategy',
     icon: 'record_voice_over',
-    link: '/#/Networkplanning'
+    link: '/Networkplanning'
   },
   {
     title: 'OSS',
     caption: 'Operation Support System',
     icon: 'public',
-    link: '/#/oss'
+    link: '/oss'
   },
   {
     title: 'Security',
-    caption: 'security',
+    caption: 'Information Security',
     icon: 'security',
-    link: '/#/securityIndex'
+    link: '/securityIndex'
   }
 ];
 
