@@ -82,6 +82,32 @@
           </template>
         </q-file>
 
+        <q-btn
+          label="Download Evidence File"
+          :loading="loading1"
+          color="brown"
+          @click="downloadFile(1)"
+          icon="camera_front"
+        >
+          <template v-slot:loading>
+            <q-spinner-hourglass class="on-left" />
+            Loading...
+          </template>
+        </q-btn>
+
+        <q-btn
+          label="Download Evidence Image"
+          :loading="loading2"
+          color="black"
+          @click="downloadImage(2)"
+          icon="camera_rear"
+        >
+          <template v-slot:loading>
+            <q-spinner-hourglass class="on-left" />
+            Loading...
+          </template>
+        </q-btn>
+
         <div>
           <q-btn label="Submit" type="submit" color="primary" />
         </div>
@@ -94,7 +120,7 @@
 // https://www.freecodecamp.org/news/how-to-add-charts-and-graphs-to-a-vue-js-application-29f943a45d09/
 import { defineComponent } from '@vue/composition-api';
 import axios from 'axios';
-import { SecurityEvidence } from '../components/models';
+import { SecurityEvidence, ComplianceEvidence } from '../components/models';
 
 export default defineComponent({
   name: 'SecurityDetails',
@@ -108,9 +134,14 @@ export default defineComponent({
   data() {
     return {
       separator: 'cell',
+      loading1: false,
+      loading2: false,
+      get_file_type: '',
       data: [],
       evidence_file: [],
       evidence_image: [],
+      evidence_file_name: '',
+      evidence_image_name: '',
       columns: [
         {
           name: 'compliance_check_name',
@@ -182,7 +213,14 @@ export default defineComponent({
         params: {}
       })
       .then(response => {
-        console.log(response.data);
+        console.log('Getting evidence details');
+        console.log(this.compliance_check_name);
+        console.log(this.host_resolved_ip);
+        let ce: ComplianceEvidence = response.data as ComplianceEvidence;
+        console.log(ce.evidence_remarks);
+        this.remarks = ce.evidence_remarks;
+        this.evidence_file_name = ce.evidence_file_name;
+        this.evidence_image_name = ce.evidence_image_name;
       })
       .catch(error => {
         console.log(error);
@@ -214,6 +252,90 @@ export default defineComponent({
           this.errored = true;
         })
         .finally(() => (this.loading = false));
+    },
+    downloadFile(number: number) {
+      console.log(`loading${number}`);
+      // we set loading state
+      this[`loading${number}`] = true;
+      if (number == 1) {
+        this.get_file_type = this.evidence_file_name;
+      } else {
+        this.get_file_type = this.evidence_image_name;
+      }
+      console.log(this.get_file_type);
+      axios.defaults.withCredentials = true;
+      axios
+        .get('http://localhost:5000/load_file', {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'multipart/form-data',
+            filename: this.get_file_type
+          },
+          responseType: 'blob'
+        })
+        .then(response => {
+          console.log(response.data);
+          const url = URL.createObjectURL(
+            new Blob([response.data], {
+              type: 'application/vnd.ms-excel'
+            })
+          );
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', this.get_file_type);
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          console.log(error);
+          this.errored = true;
+        })
+        .finally(() => (this.loading = false));
+
+      this[`loading${number}`] = false;
+      console.log(this[`loading${number}`]);
+    },
+    downloadImage(number: number) {
+      console.log(`loading${number}`);
+      // we set loading state
+      this[`loading${number}`] = true;
+      if (number == 1) {
+        this.get_file_type = this.evidence_file_name;
+      } else {
+        this.get_file_type = this.evidence_image_name;
+      }
+      console.log(this.get_file_type);
+      axios.defaults.withCredentials = true;
+      axios
+        .get('http://localhost:5000/load_image', {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'multipart/form-data',
+            filename: this.get_file_type
+          },
+          responseType: 'blob'
+        })
+        .then(response => {
+          console.log(response.data);
+          const url = URL.createObjectURL(
+            new Blob([response.data], {
+              type: 'application/vnd.ms-excel'
+            })
+          );
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', this.get_file_type);
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          console.log(error);
+          this.errored = true;
+        })
+        .finally(() => (this.loading = false));
+
+      this[`loading${number}`] = false;
+      console.log(this[`loading${number}`]);
     }
   }
 });

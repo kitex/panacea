@@ -28,6 +28,16 @@ export interface SecurityScan {
   scanresult_id:string;
 }
 
+export interface ComplianceEvidence {
+  compliance_check_name:string;
+  evidence_file_name: string;
+  evidence_image_name: string;
+  evidence_remarks: string;
+  host_resolved_ip: string;
+  scan_report_name: string;
+  sn: number;
+}
+
 export class SecurityEvidence {
   compliance_check_actual_value: string;
   compliance_check_info: string;
