@@ -92,7 +92,6 @@ export default defineComponent({
       axios
         .get('http://localhost:5000/list_compliance_report', {
           headers: {
-            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data'
           }
         })
@@ -108,7 +107,7 @@ export default defineComponent({
         .finally(() => (this.loading = false));
     },
     onRowClick(evt: Array<SecurityScan>, row: string) {
-      console.log(row);
+      // console.log(row);
       //console.log(typeof row);
       //console.log('clicked on', row);
       void this.$router.push({

@@ -81,7 +81,6 @@ export default defineComponent({
           'http://localhost:5000/list_compliance_detail/' + items.scanresult_id,
           {
             headers: {
-              'Access-Control-Allow-Origin': '*',
               'Content-Type': 'multipart/form-data'
             }
           }
@@ -96,7 +95,7 @@ export default defineComponent({
         .finally(() => (this.loading = false));
     },
     onRowClick(evt: Array<SecurityEvidence>, row: string) {
-      console.log('clicked on', row);
+      // console.log('clicked on', row);
       void this.$router.push({
         name: 'securityEvidence',
         params: {

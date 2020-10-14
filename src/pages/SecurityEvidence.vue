@@ -86,7 +86,7 @@
           label="Download Evidence File"
           :loading="loading1"
           color="brown"
-          @click="downloadFile(1)"
+          @click.prevent="downloadFile(1)"
           icon="camera_front"
         >
           <template v-slot:loading>
@@ -99,7 +99,7 @@
           label="Download Evidence Image"
           :loading="loading2"
           color="black"
-          @click="downloadImage(2)"
+          @click.prevent="downloadImage(2)"
           icon="camera_rear"
         >
           <template v-slot:loading>
@@ -107,7 +107,6 @@
             Loading...
           </template>
         </q-btn>
-
         <div>
           <q-btn label="Submit" type="submit" color="primary" />
         </div>
@@ -184,6 +183,7 @@ export default defineComponent({
       scanresult_id: '',
       remarks: '',
       sn: '',
+      evidence_sn: 0,
       errored: false,
       loading: false,
       pagination: []
@@ -201,26 +201,25 @@ export default defineComponent({
     this.scanresult_id = se.scanresult_id;
     this.sn = se.sn;
 
-    axios.defaults.withCredentials = true;
+    //axios.defaults.withCredentials = true;
     axios
       .get('http://localhost:5000/list_compliance_evidence', {
         headers: {
-          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'multipart/form-data',
           compliance_check_name: this.compliance_check_name,
           host_resolved_ip: this.host_resolved_ip
-        },
-        params: {}
+        }
       })
       .then(response => {
-        console.log('Getting evidence details');
-        console.log(this.compliance_check_name);
-        console.log(this.host_resolved_ip);
+        //console.log('Getting evidence details');
+        //console.log(this.compliance_check_name);
+        //console.log(this.host_resolved_ip);
         let ce: ComplianceEvidence = response.data as ComplianceEvidence;
-        console.log(ce.evidence_remarks);
+        //console.log(ce.evidence_remarks);
         this.remarks = ce.evidence_remarks;
         this.evidence_file_name = ce.evidence_file_name;
         this.evidence_image_name = ce.evidence_image_name;
+        this.evidence_sn = ce.sn;
       })
       .catch(error => {
         console.log(error);
@@ -231,16 +230,17 @@ export default defineComponent({
   methods: {
     onSubmit() {
       axios.defaults.withCredentials = true;
+      this.formData.append('sn', this.evidence_sn.toString());
       this.formData.append('host_resolved_ip', this.host_resolved_ip);
       this.formData.append('scan_report_name', this.scan_report_name);
       this.formData.append('evidence_remarks', this.remarks);
+      console.log(this.remarks);
       this.formData.append('compliance_check_name', this.compliance_check_name);
       this.formData.append('evidence_file', this.evidence_file[0]);
       this.formData.append('evidence_image', this.evidence_image[0]);
       axios
         .post('http://localhost:5000/post_compliance_evidence', this.formData, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data'
           }
         })
@@ -254,7 +254,7 @@ export default defineComponent({
         .finally(() => (this.loading = false));
     },
     downloadFile(number: number) {
-      console.log(`loading${number}`);
+      // console.log(`loading${number}`);
       // we set loading state
       this[`loading${number}`] = true;
       if (number == 1) {
@@ -263,12 +263,13 @@ export default defineComponent({
         this.get_file_type = this.evidence_image_name;
       }
       console.log(this.get_file_type);
-      axios.defaults.withCredentials = true;
+      //axios.defaults.withCredentials = true;
+      //axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
       axios
         .get('http://localhost:5000/load_file', {
           headers: {
-            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data',
+            'Cache-Control': 'no-cache',
             filename: this.get_file_type
           },
           responseType: 'blob'
@@ -280,8 +281,10 @@ export default defineComponent({
               type: 'application/vnd.ms-excel'
             })
           );
+
           const link = document.createElement('a');
           link.href = url;
+          link.setAttribute('id', 'dwn_load_ahref');
           link.setAttribute('download', this.get_file_type);
           document.body.appendChild(link);
           link.click();
@@ -291,12 +294,11 @@ export default defineComponent({
           this.errored = true;
         })
         .finally(() => (this.loading = false));
-
       this[`loading${number}`] = false;
-      console.log(this[`loading${number}`]);
+      //console.log(this[`loading${number}`]);
     },
     downloadImage(number: number) {
-      console.log(`loading${number}`);
+      // console.log(`loading${number}`);
       // we set loading state
       this[`loading${number}`] = true;
       if (number == 1) {
@@ -304,23 +306,27 @@ export default defineComponent({
       } else {
         this.get_file_type = this.evidence_image_name;
       }
-      console.log(this.get_file_type);
+      // console.log(this.get_file_type);
       axios.defaults.withCredentials = true;
+      //axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
       axios
         .get('http://localhost:5000/load_image', {
           headers: {
-            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data',
+            'Cache-Control': 'no-cache',
             filename: this.get_file_type
           },
           responseType: 'blob'
         })
         .then(response => {
-          console.log(response.data);
+          //console.log(response.data);
           const url = URL.createObjectURL(
-            new Blob([response.data], {
+            new Blob(
+              [response.data]
+              /*, {
               type: 'application/vnd.ms-excel'
-            })
+            }*/
+            )
           );
           const link = document.createElement('a');
           link.href = url;
@@ -335,7 +341,7 @@ export default defineComponent({
         .finally(() => (this.loading = false));
 
       this[`loading${number}`] = false;
-      console.log(this[`loading${number}`]);
+      // console.log(this[`loading${number}`]);
     }
   }
 });
