@@ -77,14 +77,11 @@ export default defineComponent({
       this.title = items.scan_report_name;
       axios.defaults.withCredentials = true;
       axios
-        .get(
-          'http://localhost:5000/list_compliance_detail/' + items.scanresult_id,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
+        .get('list_compliance_detail/' + items.scanresult_id, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
           }
-        )
+        })
         .then(response => {
           this.resp_data = response.data as Array<SecurityEvidence>;
         })

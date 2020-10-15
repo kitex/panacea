@@ -203,7 +203,7 @@ export default defineComponent({
 
     //axios.defaults.withCredentials = true;
     axios
-      .get('http://localhost:5000/list_compliance_evidence', {
+      .get('list_compliance_evidence', {
         headers: {
           'Content-Type': 'multipart/form-data',
           compliance_check_name: this.compliance_check_name,
@@ -239,7 +239,7 @@ export default defineComponent({
       this.formData.append('evidence_file', this.evidence_file[0]);
       this.formData.append('evidence_image', this.evidence_image[0]);
       axios
-        .post('http://localhost:5000/post_compliance_evidence', this.formData, {
+        .post('post_compliance_evidence', this.formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -266,7 +266,7 @@ export default defineComponent({
       //axios.defaults.withCredentials = true;
       //axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
       axios
-        .get('http://localhost:5000/load_file', {
+        .get('load_file', {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Cache-Control': 'no-cache',
@@ -310,7 +310,7 @@ export default defineComponent({
       axios.defaults.withCredentials = true;
       //axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
       axios
-        .get('http://localhost:5000/load_image', {
+        .get('load_image', {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Cache-Control': 'no-cache',

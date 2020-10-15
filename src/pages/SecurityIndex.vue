@@ -84,13 +84,16 @@ export default defineComponent({
   },
   mounted() {
     // get initial data from server (1st page)
+
+    console.log(process.env);
+    //console.log(process.env.panaceaData.FLASK_PORT);
     this.list_compliance_report();
   },
   methods: {
     list_compliance_report() {
       axios.defaults.withCredentials = true;
       axios
-        .get('http://localhost:5000/list_compliance_report', {
+        .get('list_compliance_report', {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

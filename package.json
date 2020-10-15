@@ -7,7 +7,11 @@
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "cross-env QENV=development quasar dev",
+    "test-dev": "QENV=test quasar dev",
+    "combined": "QENV=development+test quasar dev",
+    "build": "cross-env QENV=production quasar build"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -23,11 +27,13 @@
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
+    "@quasar/quasar-app-extension-qenv": "^1.0.3",
     "@types/leaflet": "^1.5.17",
     "@types/node": "^10.17.15",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
     "@typescript-eslint/parser": "^3.3.0",
     "babel-eslint": "^10.0.1",
+    "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-loader": "^3.0.3",

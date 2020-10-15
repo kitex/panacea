@@ -78,7 +78,6 @@ export default defineComponent({
       axios
         .post('http://localhost:5000/check_user_isvalid', this.formData, {
           headers: {
-            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data'
           }
         })
