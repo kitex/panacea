@@ -76,7 +76,7 @@ export default defineComponent({
       console.log(this.formData);
       axios.defaults.withCredentials = true;
       axios
-        .post('http://localhost:5000/check_user_isvalid', this.formData, {
+        .post('check_user_isvalid', this.formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
