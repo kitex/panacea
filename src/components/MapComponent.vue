@@ -187,7 +187,7 @@ export default defineComponent({
     },
     sites_within_radius(formData: FormData) {
       axios
-        .post('http://localhost:5000/sites_within_radius', formData, {
+        .post('sites_within_radius', formData, {
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data'
@@ -208,7 +208,7 @@ export default defineComponent({
     },
     nearby_sites(formData: FormData) {
       axios
-        .post('http://localhost:5000/nearby_sites', formData, {
+        .post('nearby_sites', formData, {
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'multipart/form-data'

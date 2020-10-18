@@ -73,7 +73,6 @@ export default defineComponent({
     check_user_isvalid() {
       this.formData.append('username', this.username);
       this.formData.append('password', this.password);
-      console.log(this.formData);
       axios.defaults.withCredentials = true;
       axios
         .post('check_user_isvalid', this.formData, {
